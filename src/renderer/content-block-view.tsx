@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { ContentBlock } from '@/src/schema/types';
 import { RichTextView } from '@/src/renderer/rich-text-view';
+import { hasRichTextContent } from '@/src/schema/richtext';
 
 function blockStyle(block: ContentBlock): CSSProperties | undefined {
   const style = block.type === 'list' ? block.blockStyle : block.style;
@@ -54,18 +55,22 @@ export function ContentBlockView({ block, depth = 1 }: ContentBlockViewProps) {
   }
 
   if (block.type === 'list') {
+    const visibleItems = block.items.filter((item) => hasRichTextContent(item.content));
+    if (visibleItems.length === 0) return null;
     return (
       <ol
         className={`resume-list resume-list--${block.style}`}
         style={blockStyle(block)}
         data-block-id={block.id}
       >
-        {block.items.map((item) => (
+        {visibleItems.map((item, index) => (
           <li key={item.id}>
-            <RichTextView content={item.content} />
-            {item.children?.map((child) => (
-              <ContentBlockView key={child.id} block={child} depth={depth + 1} />
-            ))}
+            <span className="resume-list-marker" aria-hidden="true">{block.style === 'decimal' ? `${index + 1}.` : ''}</span>
+            <div className="resume-list-content"><RichTextView content={item.content} />
+              {item.children?.map((child) => (
+                <ContentBlockView key={child.id} block={child} depth={depth + 1} />
+              ))}
+            </div>
           </li>
         ))}
       </ol>

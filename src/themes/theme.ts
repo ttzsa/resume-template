@@ -21,7 +21,14 @@ export const defaultTheme: ResumeTheme = {
     ruleColor: '#23385f',
     ruleGap: 1.2,
   },
-  entryHeader: { fontSize: 10, fontWeight: 700, fieldGap: 2.2, dateAlignRight: true },
+  entryHeader: {
+    fontSize: 10,
+    fontWeight: 700,
+    fieldGap: 2.2,
+    dateAlignRight: true,
+    dateColor: '#687487',
+    separator: 'dot',
+  },
   bullet: {
     style: 'circle',
     size: 1.3,
@@ -73,6 +80,12 @@ export function themeToCssVariables(theme: ResumeTheme): ResumeCssVariables {
     '--entry-header-size': `${theme.entryHeader.fontSize}pt`,
     '--entry-header-weight': theme.entryHeader.fontWeight,
     '--entry-field-gap': `${theme.entryHeader.fieldGap}mm`,
+    '--date-color': theme.entryHeader.dateColor ?? '#687487',
+    '--entry-separator': (theme.entryHeader.separator ?? 'dot') === 'dot'
+      ? "'·'"
+      : theme.entryHeader.separator === 'dash'
+        ? "'–'"
+        : "''",
     '--bullet-size': `${theme.bullet.size}mm`,
     '--bullet-indent': `${theme.bullet.indent}mm`,
     '--bullet-text-gap': `${theme.bullet.textGap}mm`,

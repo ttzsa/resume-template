@@ -28,3 +28,7 @@ export function getRichTextPlainText(content?: RichTextContent): string {
   if (content.text) return content.text;
   return (content.content ?? []).map(getRichTextPlainText).join('');
 }
+
+export function hasRichTextContent(content?: RichTextContent): boolean {
+  return getRichTextPlainText(content).trim().length > 0;
+}

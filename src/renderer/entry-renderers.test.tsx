@@ -42,4 +42,50 @@ describe('entry renderers', () => {
     expect(screen.getByText('Globex Agent')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Demo' })).toBeInTheDocument();
   });
+
+  it('does not render separators or an empty header row for blank project fields', () => {
+    const { container } = render(
+      <ProjectEntryView
+        project={{
+          id: crypto.randomUUID(),
+          name: richText(''),
+          role: richText(''),
+          otherInfo: richText(''),
+          blocks: [],
+        }}
+      />,
+    );
+
+    expect(container.querySelector('.resume-entry-header')).not.toBeInTheDocument();
+    expect(container.querySelector('.resume-entry-field')).not.toBeInTheDocument();
+  });
+
+  it('supports a removable, single-line entry header with per-entry typography', () => {
+    const { container, rerender } = render(
+      <ProjectEntryView
+        project={{
+          id: crypto.randomUUID(),
+          name: richText('智能文档 Agent'),
+          role: richText('核心开发'),
+          blocks: [],
+          header: { visible: true, layout: 'single-line', fontSize: 8.5 },
+        }}
+      />,
+    );
+
+    expect(container.querySelector('.resume-entry-header--single-line')?.getAttribute('style')).toContain('font-size: 8.5pt');
+
+    rerender(
+      <ProjectEntryView
+        project={{
+          id: crypto.randomUUID(),
+          name: richText('智能文档 Agent'),
+          role: richText('核心开发'),
+          blocks: [],
+          header: { visible: false },
+        }}
+      />,
+    );
+    expect(container.querySelector('.resume-entry-header')).not.toBeInTheDocument();
+  });
 });

@@ -20,4 +20,23 @@ describe('ContentBlockView', () => {
     expect(screen.getByText('Demo')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '在线体验' })).toBeInTheDocument();
   });
+
+  it('omits empty list items so no orphan bullet is rendered', () => {
+    const { container } = render(
+      <ContentBlockView
+        block={{
+          id: crypto.randomUUID(),
+          type: 'list',
+          style: 'disc',
+          items: [
+            { id: crypto.randomUUID(), content: richText('') },
+            { id: crypto.randomUUID(), content: richText('有效内容') },
+          ],
+        }}
+      />,
+    );
+
+    expect(container.querySelectorAll('.resume-list > li')).toHaveLength(1);
+    expect(screen.getByText('有效内容')).toBeInTheDocument();
+  });
 });

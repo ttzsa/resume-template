@@ -12,7 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "server": ".venv\\Scripts\\python.exe -m uvicorn server.main:app --reload --port 8000",
+    "server": ".venv\\Scripts\\python.exe -m uvicorn server.main:app --port 8000",
     "lint": "oxlint",
     "format": "oxfmt"
   },

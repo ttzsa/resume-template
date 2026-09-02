@@ -40,6 +40,8 @@ export interface ResumeTheme {
     fontWeight: number;
     fieldGap: number;
     dateAlignRight: boolean;
+    dateColor?: string;
+    separator?: 'dot' | 'dash' | 'none';
   };
   bullet: {
     style: 'circle' | 'disc' | 'decimal';
@@ -138,6 +140,19 @@ export interface DateRange {
   current?: boolean;
 }
 
+export interface EntryHeaderConfig {
+  visible?: boolean;
+  layout?: 'single-line' | 'wrap';
+  fontSize?: number;
+  separator?: 'dot' | 'dash' | 'none';
+  fieldGap?: number;
+  primaryVisible?: boolean;
+  secondaryVisible?: boolean;
+  tertiaryVisible?: boolean;
+  otherInfoVisible?: boolean;
+  dateVisible?: boolean;
+}
+
 export interface CustomField {
   id: string;
   label: string;
@@ -149,8 +164,8 @@ export interface ProfileModule extends BaseModule {
   type: 'profile';
   name: RichTextContent;
   targetRole?: RichTextContent;
-  phone: { value: string; visible: boolean };
-  email: { value: string; visible: boolean };
+  phone: { value: string; content?: RichTextContent; visible: boolean };
+  email: { value: string; content?: RichTextContent; visible: boolean };
   customFields: CustomField[];
   photo?: {
     src: string;
@@ -159,6 +174,8 @@ export interface ProfileModule extends BaseModule {
     height: number;
     borderRadius: number;
     objectPosition?: string;
+    offsetX?: number;
+    offsetY?: number;
   };
 }
 
@@ -169,6 +186,7 @@ export interface EducationEntry extends DateRange {
   major?: RichTextContent;
   otherInfo?: RichTextContent;
   blocks: ContentBlock[];
+  header?: EntryHeaderConfig;
 }
 
 export interface EducationModule extends BaseModule {
@@ -182,6 +200,7 @@ export interface ExperienceProject extends DateRange {
   role?: RichTextContent;
   otherInfo?: RichTextContent;
   blocks: ContentBlock[];
+  header?: EntryHeaderConfig;
 }
 
 export interface InternshipEntry extends DateRange {
@@ -191,6 +210,7 @@ export interface InternshipEntry extends DateRange {
   otherInfo?: RichTextContent;
   blocks?: ContentBlock[];
   projects: ExperienceProject[];
+  header?: EntryHeaderConfig;
 }
 
 export interface InternshipModule extends BaseModule {

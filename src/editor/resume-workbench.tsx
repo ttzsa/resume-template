@@ -12,6 +12,7 @@ import { ModuleEditor } from '@/src/editor/module-editor';
 import { DesignPanel } from '@/src/editor/design-panel';
 import { PaginatedResumeRenderer } from '@/src/pagination/paginated-resume';
 import { resolvePdfServiceUrl } from '@/src/pdf/service-url';
+import { getResumeDisplayTitle } from '@/src/editor/document-title';
 
 function ResumeWorkbenchInner() {
   const resume = useResumeStore((state) => state.resume);
@@ -77,7 +78,7 @@ function ResumeWorkbenchInner() {
   return <main className="workbench-shell">
     <header className="app-header">
       <div className="brand-lockup"><div className="brand-mark"><span>简</span></div><div><strong>简册</strong><span>STRUCTURED RESUME STUDIO</span></div></div>
-      <div className="document-title"><span className="status-dot" /><span>{resume.metadata.title}</span><small>{saveState}</small></div>
+      <div className="document-title"><span className="status-dot" /><span>{getResumeDisplayTitle(resume)}</span><small>{saveState}</small></div>
       <div className="header-actions">
         <button className="icon-button" aria-label="撤销" disabled={!pastCount} onClick={undo}><Undo2 size={17} /></button><button className="icon-button" aria-label="重做" disabled={!futureCount} onClick={redo}><Redo2 size={17} /></button><span className="header-separator" />
         <button className="quiet-button" onClick={() => saveResumeLocally(resume)}><Save size={16} />保存</button><button className="primary-button" onClick={exportPdf}><Download size={16} />导出 PDF</button>

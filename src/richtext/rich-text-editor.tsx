@@ -17,6 +17,14 @@ interface RichTextEditorProps {
   compact?: boolean;
 }
 
+export const FONT_OPTIONS = [
+  { label: '微软雅黑', value: 'Microsoft YaHei' },
+  { label: '宋体', value: 'SimSun' },
+  { label: '思源黑体', value: 'Noto Sans CJK SC' },
+  { label: 'Times New Roman', value: 'Times New Roman' },
+  { label: '楷体', value: 'KaiTi' },
+] as const;
+
 function Toolbar({ editor }: { editor: NonNullable<ReturnType<typeof useEditor>> }) {
   const setLink = () => {
     const previous = (editor.getAttributes('link').href as string | undefined) ?? '';
@@ -37,10 +45,10 @@ function Toolbar({ editor }: { editor: NonNullable<ReturnType<typeof useEditor>>
   return (
     <div className="rich-toolbar" role="toolbar" aria-label="局部文本样式">
       <select aria-label="字体" defaultValue="" onChange={(event) => event.target.value && editor.chain().focus().setFontFamily(event.target.value).run()}>
-        <option value="">字体</option><option value="Microsoft YaHei">微软雅黑</option><option value="SimSun">宋体</option><option value="Noto Sans CJK SC">思源黑体</option>
+        <option value="">字体</option>{FONT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
       </select>
       <select aria-label="字号" defaultValue="" onChange={(event) => event.target.value && editor.chain().focus().setFontSize(event.target.value).run()}>
-        <option value="">字号</option><option value="9pt">9pt</option><option value="10pt">10pt</option><option value="12pt">12pt</option><option value="14pt">14pt</option>
+        <option value="">字号</option><option value="8pt">8pt</option><option value="9pt">9pt</option><option value="10pt">10pt</option><option value="12pt">12pt</option><option value="14pt">14pt</option><option value="16pt">16pt</option><option value="18pt">18pt</option><option value="22pt">22pt</option>
       </select>
       <button type="button" aria-label="加粗" className={editor.isActive('bold') ? 'active' : ''} onClick={() => editor.chain().focus().toggleBold().run()}>B</button>
       <button type="button" aria-label="斜体" className={editor.isActive('italic') ? 'active' : ''} onClick={() => editor.chain().focus().toggleItalic().run()}><i>I</i></button>
@@ -79,7 +87,6 @@ export function RichTextEditor({ content, onChange, ariaLabel, compact = false }
   if (!editor) return <div className="rich-editor-loading" aria-label={ariaLabel} />;
   return (
     <div className={compact ? 'rich-editor rich-editor--compact' : 'rich-editor'}>
-      <Toolbar editor={editor} />
       <BubbleMenu editor={editor} shouldShow={({ from, to }) => from !== to}><Toolbar editor={editor} /></BubbleMenu>
       <EditorContent editor={editor} />
     </div>

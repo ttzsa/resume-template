@@ -80,6 +80,21 @@ const dateFields = {
   current: z.boolean().optional(),
 };
 
+const entryHeaderSchema = z
+  .object({
+    visible: z.boolean().optional(),
+    layout: z.enum(['single-line', 'wrap']).optional(),
+    fontSize: z.number().positive().optional(),
+    separator: z.enum(['dot', 'dash', 'none']).optional(),
+    fieldGap: z.number().nonnegative().optional(),
+    primaryVisible: z.boolean().optional(),
+    secondaryVisible: z.boolean().optional(),
+    tertiaryVisible: z.boolean().optional(),
+    otherInfoVisible: z.boolean().optional(),
+    dateVisible: z.boolean().optional(),
+  })
+  .optional();
+
 const projectSchema = z.object({
   id: uuid,
   name: richTextSchema,
@@ -87,6 +102,7 @@ const projectSchema = z.object({
   otherInfo: richTextSchema.optional(),
   ...dateFields,
   blocks: z.array(contentBlockSchema),
+  header: entryHeaderSchema,
 });
 
 const moduleStyleSchema = z
@@ -114,8 +130,8 @@ const moduleSchema = z.discriminatedUnion('type', [
     type: z.literal('profile'),
     name: richTextSchema,
     targetRole: richTextSchema.optional(),
-    phone: z.object({ value: z.string(), visible: z.boolean() }),
-    email: z.object({ value: z.string(), visible: z.boolean() }),
+    phone: z.object({ value: z.string(), content: richTextSchema.optional(), visible: z.boolean() }),
+    email: z.object({ value: z.string(), content: richTextSchema.optional(), visible: z.boolean() }),
     customFields: z.array(
       z.object({ id: uuid, label: z.string(), value: richTextSchema, visible: z.boolean() }),
     ),
@@ -127,6 +143,8 @@ const moduleSchema = z.discriminatedUnion('type', [
         height: z.number().positive(),
         borderRadius: z.number().nonnegative(),
         objectPosition: z.string().optional(),
+        offsetX: z.number().optional(),
+        offsetY: z.number().optional(),
       })
       .optional(),
   }),
@@ -142,6 +160,7 @@ const moduleSchema = z.discriminatedUnion('type', [
         otherInfo: richTextSchema.optional(),
         ...dateFields,
         blocks: z.array(contentBlockSchema),
+        header: entryHeaderSchema,
       }),
     ),
   }),
@@ -157,6 +176,7 @@ const moduleSchema = z.discriminatedUnion('type', [
         ...dateFields,
         blocks: z.array(contentBlockSchema).optional(),
         projects: z.array(projectSchema),
+        header: entryHeaderSchema,
       }),
     ),
   }),
@@ -198,6 +218,8 @@ const themeSchema = z.object({
     fontWeight: z.number(),
     fieldGap: z.number().nonnegative(),
     dateAlignRight: z.boolean(),
+    dateColor: z.string().optional(),
+    separator: z.enum(['dot', 'dash', 'none']).optional(),
   }),
   bullet: z.object({
     style: z.enum(['circle', 'disc', 'decimal']),

@@ -30,8 +30,9 @@ export function PaginatedResumeRenderer({
   const [pageUnitIds, setPageUnitIds] = useState<string[][]>(() => [units.map((unit) => unit.id)]);
   const pages = useMemo<ResumeModule[][]>(() => {
     const byId = new Map(units.map((unit) => [unit.id, unit.module]));
-    const knownIds = new Set(pageUnitIds.flat());
-    if (knownIds.size !== units.length || units.some((unit) => !knownIds.has(unit.id))) {
+    const currentOrder = pageUnitIds.flat();
+    const unitOrder = units.map((unit) => unit.id);
+    if (currentOrder.length !== unitOrder.length || currentOrder.some((id, index) => id !== unitOrder[index])) {
       return [units.map((unit) => unit.module)];
     }
     return pageUnitIds.map((page) => page.flatMap((id) => {

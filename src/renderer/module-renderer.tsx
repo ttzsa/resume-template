@@ -9,10 +9,17 @@ import {
 import { MailIcon, PhoneIcon } from '@/src/renderer/icons';
 import { RichTextView } from '@/src/renderer/rich-text-view';
 import type { ResumeTheme } from '@/src/schema/types';
+import { richText } from '@/src/schema/richtext';
+import type { CSSProperties } from 'react';
 
 function ProfileView({ module }: { module: Extract<ResumeModule, { type: 'profile' }> }) {
+  const photo = module.photo?.visible && module.photo.src ? module.photo : undefined;
   return (
-    <header className="resume-profile" data-module-id={module.id}>
+    <header
+      className={photo ? 'resume-profile resume-profile--with-photo' : 'resume-profile'}
+      data-module-id={module.id}
+      style={photo ? { '--profile-photo-width': `${photo.width}mm` } as CSSProperties : undefined}
+    >
       <div className="resume-profile-main">
         <div className="resume-identity">
           <RichTextView className="resume-name" content={module.name} />
@@ -20,10 +27,10 @@ function ProfileView({ module }: { module: Extract<ResumeModule, { type: 'profil
         </div>
         <div className="resume-contact-list">
           {module.phone.visible && module.phone.value && (
-            <span className="resume-contact"><PhoneIcon />{module.phone.value}</span>
+            <span className="resume-contact"><PhoneIcon /><RichTextView content={module.phone.content ?? richText(module.phone.value)} /></span>
           )}
           {module.email.visible && module.email.value && (
-            <a className="resume-contact" href={`mailto:${module.email.value}`}><MailIcon />{module.email.value}</a>
+            <span className="resume-contact"><MailIcon /><RichTextView content={module.email.content ?? richText(module.email.value)} /></span>
           )}
           {module.customFields.filter((field) => field.visible).map((field) => (
             <span className="resume-contact resume-custom-field" key={field.id}>
@@ -33,16 +40,18 @@ function ProfileView({ module }: { module: Extract<ResumeModule, { type: 'profil
           ))}
         </div>
       </div>
-      {module.photo?.visible && module.photo.src && (
+      {photo && (
         <img
           className="resume-photo"
-          src={module.photo.src}
+          src={photo.src}
           alt="简历头像"
           style={{
-            width: `${module.photo.width}mm`,
-            height: `${module.photo.height}mm`,
-            borderRadius: `${module.photo.borderRadius}mm`,
-            objectPosition: module.photo.objectPosition,
+            width: `${photo.width}mm`,
+            height: `${photo.height}mm`,
+            borderRadius: 0,
+            objectPosition: photo.objectPosition,
+            right: `${-(photo.offsetX ?? 0)}mm`,
+            top: `${photo.offsetY ?? 0}mm`,
           }}
         />
       )}

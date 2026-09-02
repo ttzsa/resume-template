@@ -18,4 +18,22 @@ describe('theme inheritance', () => {
     expect(variables['--page-margin-left']).toMatch(/mm$/);
     expect(variables['--font-size']).toMatch(/pt$/);
   });
+
+  it('maps body, date, entry separator and shared content spacing controls', () => {
+    const variables = themeToCssVariables({
+      ...defaultTheme,
+      color: '#123456',
+      paragraphGap: 2.4,
+      entryHeader: {
+        ...defaultTheme.entryHeader,
+        dateColor: '#654321',
+        separator: 'dash',
+      },
+    });
+
+    expect(variables['--text-color']).toBe('#123456');
+    expect(variables['--date-color']).toBe('#654321');
+    expect(variables['--entry-separator']).toBe("'–'");
+    expect(variables['--paragraph-gap']).toBe('2.4mm');
+  });
 });
