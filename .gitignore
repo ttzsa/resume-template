@@ -41,3 +41,5 @@ next-env.d.ts
 /tmp/
 /output/
 /.venv/
+__pycache__/
+*.pyc
