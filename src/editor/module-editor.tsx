@@ -31,7 +31,7 @@ function EntryHeaderSettings({ value, onChange, fields }: { value?: EntryHeaderC
 
 function SortableEntry({ id, label, children, onDelete }: { id: string; label: string; children: React.ReactNode; onDelete: () => void }) {
   const sortable = useSortable({ id });
-  return <article ref={sortable.setNodeRef} style={{ transform: CSS.Transform.toString(sortable.transform), transition: sortable.transition }} className="entry-editor-card"><header><button className="drag-button" aria-label={`拖动${label}`} {...sortable.attributes} {...sortable.listeners}><GripVertical size={15} /></button><strong>{label}</strong><button aria-label={`删除${label}`} onClick={onDelete}><Trash2 size={14} /></button></header>{children}</article>;
+  return <article ref={sortable.setNodeRef} style={{ transform: CSS.Transform.toString(sortable.transform), transition: sortable.transition }} className="entry-editor-card" data-editor-entry-id={id}><header><button className="drag-button" aria-label={`拖动${label}`} {...sortable.attributes} {...sortable.listeners}><GripVertical size={15} /></button><strong>{label}</strong><button aria-label={`删除${label}`} onClick={onDelete}><Trash2 size={14} /></button></header>{children}</article>;
 }
 
 function SortableEntries<T extends { id: string }>({ items, onChange, render }: { items: T[]; onChange: (items: T[]) => void; render: (item: T, index: number) => React.ReactNode }) {

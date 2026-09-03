@@ -64,7 +64,7 @@ export function ContentBlockView({ block, depth = 1 }: ContentBlockViewProps) {
         data-block-id={block.id}
       >
         {visibleItems.map((item, index) => (
-          <li key={item.id}>
+          <li key={item.id} data-item-id={item.id}>
             <div className="resume-list-row" style={{ alignItems: 'start' }}>
               <span className="resume-list-marker" aria-hidden="true" style={{ alignSelf: 'start', lineHeight: 'inherit', height: '1lh' }}>{block.style === 'decimal' ? `${index + 1}.` : ''}</span>
               <div className="resume-list-text"><RichTextView content={item.content} /></div>

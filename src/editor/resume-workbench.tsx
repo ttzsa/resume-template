@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react';
 import { ChevronDown, Download, FileJson, Layers3, Palette, Redo2, RotateCcw, Save, Undo2, Upload } from 'lucide-react';
 import type { Resume } from '@/src/schema/types';
 import { createExampleResume } from '@/src/schema/example';
@@ -21,13 +21,59 @@ function ResumeWorkbenchInner() {
   const undo = useResumeStore((state) => state.undo);
   const redo = useResumeStore((state) => state.redo);
   const replaceResume = useResumeStore((state) => state.replaceResume);
+  const selectModule = useResumeStore((state) => state.selectModule);
   const [activeTab, setActiveTab] = useState<'content' | 'design'>('content');
   const [zoom, setZoom] = useState('1');
   const [pageCount, setPageCount] = useState(1);
   const [saveState, setSaveState] = useState('已保存');
   const [hydrated, setHydrated] = useState(false);
+  const editorScrollRef = useRef<HTMLDivElement>(null);
+  const highlightedTargetRef = useRef<HTMLElement | null>(null);
+  const highlightTimerRef = useRef<number | null>(null);
   const importRef = useRef<HTMLInputElement>(null);
   const onPageCountChange = useCallback((count: number) => setPageCount(count), []);
+
+  const openModuleFromPreview = useCallback((event: ReactMouseEvent<HTMLDivElement>) => {
+    if (!(event.target instanceof Element)) return;
+    const moduleId = event.target.closest<HTMLElement>('[data-module-id]')?.dataset.moduleId;
+    if (!moduleId || !resume.modules.some((module) => module.id === moduleId)) return;
+    const itemId = event.target.closest<HTMLElement>('[data-item-id]')?.dataset.itemId;
+    const blockId = event.target.closest<HTMLElement>('[data-block-id]')?.dataset.blockId;
+    const entryId = event.target.closest<HTMLElement>('[data-entry-id]')?.dataset.entryId;
+    setActiveTab('content');
+    selectModule(moduleId);
+    window.requestAnimationFrame(() => {
+      const editorRoot = editorScrollRef.current;
+      const target = itemId
+        ? editorRoot?.querySelector<HTMLElement>(`[data-editor-item-id="${itemId}"]`)
+        : blockId
+          ? editorRoot?.querySelector<HTMLElement>(`[data-editor-block-id="${blockId}"]`)
+          : entryId
+            ? editorRoot?.querySelector<HTMLElement>(`[data-editor-entry-id="${entryId}"]`)
+            : editorRoot?.querySelector<HTMLElement>('.property-card');
+      const highlightedTarget = target?.querySelector<HTMLElement>('.rich-editor') ?? target;
+      highlightedTarget?.scrollIntoView?.({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      if (itemId || blockId || entryId) highlightedTarget?.querySelector<HTMLElement>('.rich-editor-content')?.focus();
+      highlightedTargetRef.current?.classList.remove('preview-linked-highlight');
+      if (highlightTimerRef.current !== null) window.clearTimeout(highlightTimerRef.current);
+      if (!highlightedTarget) return;
+      highlightedTarget.classList.add('preview-linked-highlight');
+      highlightedTargetRef.current = highlightedTarget;
+      highlightTimerRef.current = window.setTimeout(() => {
+        highlightedTarget.classList.remove('preview-linked-highlight');
+        if (highlightedTargetRef.current === highlightedTarget) highlightedTargetRef.current = null;
+        highlightTimerRef.current = null;
+      }, 2000);
+    });
+  }, [resume.modules, selectModule]);
+
+  useEffect(() => () => {
+    if (highlightTimerRef.current !== null) window.clearTimeout(highlightTimerRef.current);
+    highlightedTargetRef.current?.classList.remove('preview-linked-highlight');
+  }, []);
 
   useEffect(() => {
     if (typeof indexedDB === 'undefined') { setHydrated(true); return; }
@@ -87,7 +133,7 @@ function ResumeWorkbenchInner() {
     <div className="workbench-body">
       <aside className="editor-panel">
         <div className="panel-tabs" role="tablist" aria-label="编辑模式"><button className={activeTab === 'content' ? 'active' : ''} onClick={() => setActiveTab('content')} role="tab" aria-selected={activeTab === 'content'}><Layers3 size={16} />内容</button><button className={activeTab === 'design' ? 'active' : ''} onClick={() => setActiveTab('design')} role="tab" aria-selected={activeTab === 'design'}><Palette size={16} />设计</button></div>
-        {activeTab === 'content' ? <div className="editor-scroll"><ModuleTree /><ModuleEditor /></div> : <DesignPanel />}
+        {activeTab === 'content' ? <div className="editor-scroll" ref={editorScrollRef}><ModuleTree /><ModuleEditor /></div> : <DesignPanel />}
       </aside>
       <section className="preview-panel" aria-label="A4 实时预览">
         <div className="preview-toolbar"><div><strong>A4 实时预览</strong><span>所见即所得 · 自动分页</span></div><div className="preview-actions">
@@ -95,7 +141,7 @@ function ResumeWorkbenchInner() {
           <button title="恢复默认示例" onClick={() => replaceResume(createExampleResume())}><RotateCcw size={14} /></button>
           <select className="zoom-control" aria-label="预览缩放" value={zoom} onChange={(event) => setZoom(event.target.value)}><option value="0.5">50%</option><option value="0.75">75%</option><option value="1">100%</option><option value="0.69">适合宽度</option></select><ChevronDown className="zoom-chevron" size={13} /><span className="page-count">1 / {pageCount}</span>
         </div></div>
-        <div className="preview-stage" data-testid="resume-preview"><div className="preview-sheet-wrap" style={{ '--preview-scale': zoom } as CSSProperties}><PaginatedResumeRenderer resume={resume} onPageCountChange={onPageCountChange} /></div></div>
+        <div className="preview-stage" data-testid="resume-preview" onClick={openModuleFromPreview}><div className="preview-sheet-wrap" style={{ '--preview-scale': zoom } as CSSProperties}><PaginatedResumeRenderer resume={resume} onPageCountChange={onPageCountChange} /></div></div>
       </section>
     </div>
   </main>;

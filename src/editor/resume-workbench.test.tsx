@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { ResumeWorkbench } from '@/src/editor/resume-workbench';
 import { createExampleResume } from '@/src/schema/example';
 
@@ -22,6 +22,43 @@ describe('ResumeWorkbench', () => {
       willChange: 'transform',
       backfaceVisibility: 'hidden',
     });
+  });
+
+  it('opens the matching content module when its A4 preview is clicked', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<ResumeWorkbench initialResume={createExampleResume()} />);
+
+    await user.click(await screen.findByRole('tab', { name: '设计' }));
+    await user.click(container.querySelector<HTMLElement>('.resume-pages--preview .resume-section--education')!);
+
+    expect(screen.getByRole('tab', { name: '内容' })).toHaveAttribute('aria-selected', 'true');
+    expect(container.querySelector('.property-card h2')).toHaveTextContent('教育背景');
+    expect(container.querySelector('.module-node.selected .module-name')).toHaveTextContent('教育背景');
+  });
+
+  it('focuses the matching list item editor when a project bullet is clicked', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<ResumeWorkbench initialResume={createExampleResume()} />);
+
+    await user.click(await screen.findByRole('tab', { name: '设计' }));
+    await user.click(container.querySelector<HTMLElement>('.resume-pages--preview .resume-section--project .resume-list-text')!);
+
+    const listItemEditor = await screen.findByRole('textbox', { name: '列表项 1' });
+    await waitFor(() => expect(listItemEditor).toHaveFocus());
+    expect(container.querySelector('.module-node.selected .module-name')).toHaveTextContent('项目经历');
+  });
+
+  it('highlights the matching list editor and schedules removal after two seconds', async () => {
+    const timeoutSpy = vi.spyOn(window, 'setTimeout');
+    const user = userEvent.setup();
+    const { container } = render(<ResumeWorkbench initialResume={createExampleResume()} />);
+
+    await user.click(container.querySelector<HTMLElement>('.resume-pages--preview .resume-section--project .resume-list-text')!);
+
+    const listItemEditor = await screen.findByRole('textbox', { name: '列表项 1' });
+    await waitFor(() => expect(listItemEditor.closest('.rich-editor')).toHaveClass('preview-linked-highlight'));
+    expect(timeoutSpy.mock.calls.some(([, delay]) => delay === 2000)).toBe(true);
+    timeoutSpy.mockRestore();
   });
 
   it('updates the A4 preview immediately when the profile name changes', async () => {
