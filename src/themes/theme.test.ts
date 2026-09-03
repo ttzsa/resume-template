@@ -43,6 +43,15 @@ describe('theme inheritance', () => {
     expect(defaultTheme.color).toBe('#000000');
   });
 
+  it('uses Times New Roman first for Latin letters and numbers while preserving the chosen CJK font', () => {
+    const variables = themeToCssVariables({
+      ...defaultTheme,
+      fontFamily: 'KaiTi, STKaiti, serif',
+    });
+
+    expect(variables['--font-family']).toBe('"Times New Roman", Times, KaiTi, STKaiti, serif');
+  });
+
   it('allows negative bullet indentation without changing schema validity', () => {
     const resume = createExampleResume();
     resume.theme.bullet.indent = -4;

@@ -57,13 +57,18 @@ export function mergeTheme(theme: ResumeTheme, override?: ModuleStyle): ResumeTh
 
 export type ResumeCssVariables = CSSProperties & Record<`--${string}`, string | number>;
 
+const withTimesNewRomanForLatin = (fontFamily: string) =>
+  /^\s*["']?Times New Roman["']?\s*(?:,|$)/i.test(fontFamily)
+    ? fontFamily
+    : `"Times New Roman", Times, ${fontFamily}`;
+
 export function themeToCssVariables(theme: ResumeTheme): ResumeCssVariables {
   return {
     '--page-margin-top': `${theme.page.marginTop}mm`,
     '--page-margin-right': `${theme.page.marginRight}mm`,
     '--page-margin-bottom': `${theme.page.marginBottom}mm`,
     '--page-margin-left': `${theme.page.marginLeft}mm`,
-    '--font-family': theme.fontFamily,
+    '--font-family': withTimesNewRomanForLatin(theme.fontFamily),
     '--font-size': `${theme.fontSize}pt`,
     '--text-color': theme.color,
     '--line-height': theme.lineHeight,
