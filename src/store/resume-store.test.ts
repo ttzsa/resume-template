@@ -15,7 +15,7 @@ describe('resume store history', () => {
     expect(getRichTextPlainText(store.getState().resume.modules[0].type === 'profile' ? store.getState().resume.modules[0].name : undefined)).toBe('陈序');
 
     store.getState().undo();
-    expect(getRichTextPlainText(store.getState().resume.modules[0].type === 'profile' ? store.getState().resume.modules[0].name : undefined)).toBe('林墨');
+    expect(getRichTextPlainText(store.getState().resume.modules[0].type === 'profile' ? store.getState().resume.modules[0].name : undefined)).toBe('姓名');
 
     store.getState().redo();
     expect(getRichTextPlainText(store.getState().resume.modules[0].type === 'profile' ? store.getState().resume.modules[0].name : undefined)).toBe('陈序');

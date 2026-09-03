@@ -23,6 +23,12 @@ interface EntryHeaderProps {
 
 const separatorContent = (separator?: EntryHeaderConfig['separator']) => separator === 'dash' ? "'–'" : separator === 'none' ? "''" : undefined;
 
+function DateRange({ value }: { value: string }) {
+  const [start, end] = value.split(' – ');
+  if (!end) return value;
+  return <><span className="resume-date-full">{value}</span><span className="resume-date-visual" aria-hidden="true"><span>{start}</span><span className="resume-date-separator">–</span><span>{end}</span></span></>;
+}
+
 function EntryHeader({ primary, secondary, tertiary, otherInfo, date, header }: EntryHeaderProps) {
   if (header?.visible === false) return null;
   const showPrimary = header?.primaryVisible !== false && hasRichTextContent(primary);
@@ -44,7 +50,7 @@ function EntryHeader({ primary, secondary, tertiary, otherInfo, date, header }: 
         {showTertiary && <RichTextView className="resume-entry-field" content={tertiary} />}
         {showOther && <RichTextView className="resume-entry-other" content={otherInfo} />}
       </div>
-      {showDate && <time className="resume-entry-date">{date}</time>}
+      {showDate && <time className="resume-entry-date"><DateRange value={date!} /></time>}
     </div>
   );
 }

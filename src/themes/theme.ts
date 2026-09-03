@@ -6,7 +6,7 @@ export const defaultTheme: ResumeTheme = {
   fontFamily:
     '"Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif',
   fontSize: 9.5,
-  color: '#20252d',
+  color: '#000000',
   lineHeight: 1.38,
   paragraphGap: 1.2,
   sectionGap: 3.8,

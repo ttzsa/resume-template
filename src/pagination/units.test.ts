@@ -26,5 +26,19 @@ describe('createPaginationUnits', () => {
 
     expect(units).toHaveLength(skills.blocks.length);
     expect(units.every((unit) => unit.atomic)).toBe(true);
+    expect(units[0].module.style?.sectionGap).toBeUndefined();
+    expect(units.slice(1).every((unit) => unit.module.style?.sectionGap === 0)).toBe(true);
+  });
+
+  it('does not repeat major-module spacing between entries in the same module', () => {
+    const resume = createExampleResume();
+    const education = resume.modules.find((module) => module.type === 'education');
+    if (!education || education.type !== 'education') throw new Error('education fixture missing');
+    education.entries.push({ ...structuredClone(education.entries[0]), id: crypto.randomUUID() });
+
+    const units = createPaginationUnits([education]);
+
+    expect(units[0].module.style?.sectionGap).toBeUndefined();
+    expect(units[1].module.style?.sectionGap).toBe(0);
   });
 });

@@ -11,7 +11,9 @@ export async function saveResumeLocally(resume: Resume) {
 export async function loadLocalResume(): Promise<Resume | null> {
   const value: unknown = await get(STORAGE_KEY);
   const parsed = ResumeSchema.safeParse(value);
-  return parsed.success ? parsed.data : null;
+  if (!parsed.success) return null;
+  if (parsed.data.theme.color.toLowerCase() !== '#20252d') return parsed.data;
+  return { ...parsed.data, theme: { ...parsed.data.theme, color: '#000000' } };
 }
 
 export async function clearLocalResume() {

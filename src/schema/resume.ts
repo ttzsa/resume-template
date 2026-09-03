@@ -132,6 +132,7 @@ const moduleSchema = z.discriminatedUnion('type', [
     targetRole: richTextSchema.optional(),
     phone: z.object({ value: z.string(), content: richTextSchema.optional(), visible: z.boolean() }),
     email: z.object({ value: z.string(), content: richTextSchema.optional(), visible: z.boolean() }),
+    github: z.object({ value: z.string(), content: richTextSchema.optional(), visible: z.boolean() }).optional(),
     customFields: z.array(
       z.object({ id: uuid, label: z.string(), value: richTextSchema, visible: z.boolean() }),
     ),
@@ -224,7 +225,7 @@ const themeSchema = z.object({
   bullet: z.object({
     style: z.enum(['circle', 'disc', 'decimal']),
     size: z.number().positive(),
-    indent: z.number().nonnegative(),
+    indent: z.number().min(-30),
     textGap: z.number().nonnegative(),
     itemGap: z.number().nonnegative(),
     color: z.string(),

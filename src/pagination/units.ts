@@ -9,6 +9,7 @@ export interface PaginationUnit {
 
 export function createPaginationUnits(modules: ResumeModule[]): PaginationUnit[] {
   const units: PaginationUnit[] = [];
+  const continuationStyle = (module: ResumeModule, index: number) => index === 0 ? module.style : { ...module.style, sectionGap: 0 };
 
   for (const module of modules.filter((candidate) => candidate.visible)) {
     if (module.type === 'profile') {
@@ -24,7 +25,7 @@ export function createPaginationUnits(modules: ResumeModule[]): PaginationUnit[]
         units.push({
           id: `${module.id}:entry:${entry.id}`,
           sourceModuleId: module.id,
-          module: { ...module, title: index === 0 ? module.title : undefined, entries: [entry] },
+          module: { ...module, title: index === 0 ? module.title : undefined, style: continuationStyle(module, index), entries: [entry] },
           atomic: true,
         });
       });
@@ -39,7 +40,7 @@ export function createPaginationUnits(modules: ResumeModule[]): PaginationUnit[]
         units.push({
           id: `${module.id}:entry:${entry.id}`,
           sourceModuleId: module.id,
-          module: { ...module, title: index === 0 ? module.title : undefined, entries: [entry] },
+          module: { ...module, title: index === 0 ? module.title : undefined, style: continuationStyle(module, index), entries: [entry] },
           atomic: true,
         });
       });
@@ -54,7 +55,7 @@ export function createPaginationUnits(modules: ResumeModule[]): PaginationUnit[]
         units.push({
           id: `${module.id}:project:${project.id}`,
           sourceModuleId: module.id,
-          module: { ...module, title: index === 0 ? module.title : undefined, projects: [project] },
+          module: { ...module, title: index === 0 ? module.title : undefined, style: continuationStyle(module, index), projects: [project] },
           atomic: true,
         });
       });
@@ -68,7 +69,12 @@ export function createPaginationUnits(modules: ResumeModule[]): PaginationUnit[]
       units.push({
         id: `${module.id}:block:${block.id}`,
         sourceModuleId: module.id,
-        module: { ...module, title: index === 0 ? module.title : '', blocks: [block] },
+        module: {
+          ...module,
+          title: index === 0 ? module.title : '',
+          style: continuationStyle(module, index),
+          blocks: [block],
+        },
         atomic: true,
       });
     });

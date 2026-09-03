@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import StarterKit from '@tiptap/starter-kit';
@@ -26,6 +26,20 @@ export const FONT_OPTIONS = [
 ] as const;
 
 function Toolbar({ editor }: { editor: NonNullable<ReturnType<typeof useEditor>> }) {
+  const colorSelection = useRef<{ from: number; to: number } | null>(null);
+  const selectedColor = editor.getAttributes('textStyle').color;
+  const colorValue = typeof selectedColor === 'string' && /^#[0-9a-f]{6}$/i.test(selectedColor) ? selectedColor : '#000000';
+  const rememberColorSelection = () => {
+    const { from, to } = editor.state.selection;
+    colorSelection.current = { from, to };
+  };
+  const setColor = (color: string) => {
+    const chain = editor.chain().focus();
+    if (colorSelection.current && colorSelection.current.from !== colorSelection.current.to) {
+      chain.setTextSelection(colorSelection.current);
+    }
+    chain.setColor(color).run();
+  };
   const setLink = () => {
     const previous = (editor.getAttributes('link').href as string | undefined) ?? '';
     const value = window.prompt('链接地址', previous);
@@ -53,7 +67,7 @@ function Toolbar({ editor }: { editor: NonNullable<ReturnType<typeof useEditor>>
       <button type="button" aria-label="加粗" className={editor.isActive('bold') ? 'active' : ''} onClick={() => editor.chain().focus().toggleBold().run()}>B</button>
       <button type="button" aria-label="斜体" className={editor.isActive('italic') ? 'active' : ''} onClick={() => editor.chain().focus().toggleItalic().run()}><i>I</i></button>
       <button type="button" aria-label="下划线" className={editor.isActive('underline') ? 'active' : ''} onClick={() => editor.chain().focus().toggleUnderline().run()}><u>U</u></button>
-      <label className="color-control" aria-label="文字颜色"><input type="color" defaultValue="#20252d" onChange={(event) => editor.chain().focus().setColor(event.target.value).run()} /></label>
+      <label className="color-control" aria-label="文字颜色"><input type="color" value={colorValue} onPointerDown={rememberColorSelection} onChange={(event) => setColor(event.target.value)} /></label>
       <button type="button" aria-label="添加或修改链接" className={editor.isActive('link') ? 'active' : ''} onClick={setLink}>链接</button>
       {editor.isActive('link') && <button type="button" aria-label="取消链接" onClick={() => editor.chain().focus().extendMarkRange('link').unsetLink().run()}>取消</button>}
     </div>

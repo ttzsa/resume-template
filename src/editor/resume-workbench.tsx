@@ -77,7 +77,7 @@ function ResumeWorkbenchInner() {
 
   return <main className="workbench-shell">
     <header className="app-header">
-      <div className="brand-lockup"><div className="brand-mark"><span>简</span></div><div><strong>简册</strong><span>STRUCTURED RESUME STUDIO</span></div></div>
+      <div className="brand-lockup"><div className="brand-mark"><span>极</span></div><div><strong>极简简历</strong><span>STRUCTURED RESUME STUDIO</span></div></div>
       <div className="document-title"><span className="status-dot" /><span>{getResumeDisplayTitle(resume)}</span><small>{saveState}</small></div>
       <div className="header-actions">
         <button className="icon-button" aria-label="撤销" disabled={!pastCount} onClick={undo}><Undo2 size={17} /></button><button className="icon-button" aria-label="重做" disabled={!futureCount} onClick={redo}><Redo2 size={17} /></button><span className="header-separator" />

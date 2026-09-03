@@ -14,7 +14,7 @@ class PdfRequest(BaseModel):
     frontendUrl: AnyHttpUrl = Field(alias="frontendUrl")
 
 
-app = FastAPI(title="简册 PDF Service", version="1.0.0")
+app = FastAPI(title="极简简历 PDF Service", version="1.0.0")
 origins = [origin.strip() for origin in os.getenv("FRONTEND_ORIGINS", "http://localhost:3000").split(",") if origin.strip()]
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=False, allow_methods=["POST", "GET"], allow_headers=["Content-Type"])
 

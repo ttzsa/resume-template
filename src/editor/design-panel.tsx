@@ -38,7 +38,7 @@ export function DesignPanel() {
         <NumberField label="字段间距" unit="mm" value={theme.entryHeader.fieldGap} onChange={(value) => updateTheme({ entryHeader: { ...theme.entryHeader, fieldGap: value } })} />
       </div></details>
       <details className="design-group"><summary>列表与链接</summary><div className="design-grid">
-        <NumberField label="Bullet 缩进" unit="mm" value={theme.bullet.indent} onChange={(value) => updateTheme({ bullet: { ...theme.bullet, indent: value } })} />
+        <NumberField label="Bullet 缩进" unit="mm" min={-30} value={theme.bullet.indent} onChange={(value) => updateTheme({ bullet: { ...theme.bullet, indent: value } })} />
         <NumberField label="内容项间距" unit="mm" value={theme.paragraphGap} onChange={(value) => updateTheme({ paragraphGap: value, bullet: { ...theme.bullet, itemGap: value } })} />
         <label className="design-field"><span>链接颜色</span><input aria-label="链接颜色" type="color" value={theme.link.color === 'inherit' ? theme.color : theme.link.color} onChange={(event) => updateTheme({ link: { ...theme.link, color: event.target.value } })} /></label>
         <label className="design-check"><input type="checkbox" checked={theme.link.underline} onChange={(event) => updateTheme({ link: { ...theme.link, underline: event.target.checked } })} /><span>链接下划线</span></label>

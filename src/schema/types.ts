@@ -166,6 +166,7 @@ export interface ProfileModule extends BaseModule {
   targetRole?: RichTextContent;
   phone: { value: string; content?: RichTextContent; visible: boolean };
   email: { value: string; content?: RichTextContent; visible: boolean };
+  github?: { value: string; content?: RichTextContent; visible: boolean };
   customFields: CustomField[];
   photo?: {
     src: string;

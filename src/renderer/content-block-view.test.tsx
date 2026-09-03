@@ -39,4 +39,20 @@ describe('ContentBlockView', () => {
     expect(container.querySelectorAll('.resume-list > li')).toHaveLength(1);
     expect(screen.getByText('有效内容')).toBeInTheDocument();
   });
+
+  it('groups each marker with its own text row for vertical centering', () => {
+    const { container } = render(
+      <ContentBlockView
+        block={{
+          id: crypto.randomUUID(),
+          type: 'list',
+          style: 'circle',
+          items: [{ id: crypto.randomUUID(), content: richText('正文') }],
+        }}
+      />,
+    );
+
+    expect(container.querySelector('.resume-list-row > .resume-list-marker')).toBeInTheDocument();
+    expect(container.querySelector('.resume-list-row > .resume-list-text')).toHaveTextContent('正文');
+  });
 });

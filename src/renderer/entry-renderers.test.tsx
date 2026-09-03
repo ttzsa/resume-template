@@ -88,4 +88,20 @@ describe('entry renderers', () => {
     );
     expect(container.querySelector('.resume-entry-header')).not.toBeInTheDocument();
   });
+
+  it('renders the date dash as a separately centered element', () => {
+    const { container } = render(
+      <ProjectEntryView
+        project={{
+          id: crypto.randomUUID(),
+          name: richText('项目名'),
+          startDate: '2025-01',
+          endDate: '2025-12',
+          blocks: [],
+        }}
+      />,
+    );
+
+    expect(container.querySelector('.resume-date-separator')).toHaveTextContent('–');
+  });
 });

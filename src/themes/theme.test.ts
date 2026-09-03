@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { defaultTheme, mergeTheme, themeToCssVariables } from '@/src/themes/theme';
+import { ResumeSchema } from '@/src/schema/resume';
+import { createExampleResume } from '@/src/schema/example';
 
 describe('theme inheritance', () => {
   it('applies only module overrides without mutating the global theme', () => {
@@ -35,5 +37,17 @@ describe('theme inheritance', () => {
     expect(variables['--date-color']).toBe('#654321');
     expect(variables['--entry-separator']).toBe("'–'");
     expect(variables['--paragraph-gap']).toBe('2.4mm');
+  });
+
+  it('uses pure black body text by default', () => {
+    expect(defaultTheme.color).toBe('#000000');
+  });
+
+  it('allows negative bullet indentation without changing schema validity', () => {
+    const resume = createExampleResume();
+    resume.theme.bullet.indent = -4;
+
+    expect(ResumeSchema.safeParse(resume).success).toBe(true);
+    expect(themeToCssVariables(resume.theme)['--bullet-indent']).toBe('-4mm');
   });
 });
