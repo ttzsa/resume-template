@@ -5,6 +5,25 @@ import { ResumeWorkbench } from '@/src/editor/resume-workbench';
 import { createExampleResume } from '@/src/schema/example';
 
 describe('ResumeWorkbench', () => {
+  it('opens the A4 preview at 100% by default', async () => {
+    render(<ResumeWorkbench initialResume={createExampleResume()} />);
+
+    expect(await screen.findByLabelText('预览缩放')).toHaveValue('1');
+    expect(screen.getByTestId('resume-preview').querySelector('.preview-sheet-wrap')).toHaveStyle({
+      '--preview-scale': '1',
+    });
+  });
+
+  it('keeps the preview on a composited layer so black text renders consistently at 100%', async () => {
+    render(<ResumeWorkbench initialResume={createExampleResume()} />);
+
+    const pages = await screen.findByTestId('resume-preview');
+    expect(pages.querySelector('.resume-pages--preview')).toHaveStyle({
+      willChange: 'transform',
+      backfaceVisibility: 'hidden',
+    });
+  });
+
   it('updates the A4 preview immediately when the profile name changes', async () => {
     const user = userEvent.setup();
     render(<ResumeWorkbench initialResume={createExampleResume()} />);

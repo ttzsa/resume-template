@@ -22,7 +22,7 @@ function ResumeWorkbenchInner() {
   const redo = useResumeStore((state) => state.redo);
   const replaceResume = useResumeStore((state) => state.replaceResume);
   const [activeTab, setActiveTab] = useState<'content' | 'design'>('content');
-  const [zoom, setZoom] = useState('0.69');
+  const [zoom, setZoom] = useState('1');
   const [pageCount, setPageCount] = useState(1);
   const [saveState, setSaveState] = useState('已保存');
   const [hydrated, setHydrated] = useState(false);

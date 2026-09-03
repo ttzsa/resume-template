@@ -40,19 +40,39 @@ describe('ContentBlockView', () => {
     expect(screen.getByText('有效内容')).toBeInTheDocument();
   });
 
-  it('groups each marker with its own text row for vertical centering', () => {
+  it('aligns each marker with the first line of multiline text', () => {
     const { container } = render(
       <ContentBlockView
         block={{
           id: crypto.randomUUID(),
           type: 'list',
           style: 'circle',
-          items: [{ id: crypto.randomUUID(), content: richText('正文') }],
+          blockStyle: { lineHeight: 1.2 },
+          items: [{
+            id: crypto.randomUUID(),
+            content: {
+              type: 'doc',
+              content: [{
+                type: 'paragraph',
+                content: [
+                  { type: 'text', text: '第一行正文' },
+                  { type: 'hardBreak' },
+                  { type: 'text', text: '第二行正文' },
+                ],
+              }],
+            },
+          }],
         }}
       />,
     );
 
-    expect(container.querySelector('.resume-list-row > .resume-list-marker')).toBeInTheDocument();
-    expect(container.querySelector('.resume-list-row > .resume-list-text')).toHaveTextContent('正文');
+    const row = container.querySelector<HTMLElement>('.resume-list-row');
+    const marker = container.querySelector<HTMLElement>('.resume-list-marker');
+    expect(row).not.toBeNull();
+    expect(marker).not.toBeNull();
+    expect(row!.style.alignItems).toBe('start');
+    expect(marker!.style.alignSelf).toBe('start');
+    expect(marker!.style.lineHeight).toBe('inherit');
+    expect(marker!.style.height).toBe('1lh');
   });
 });
